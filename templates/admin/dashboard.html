@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Admin — Vero{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Sessions</h2>
+    <a href="/admin/create" class="btn btn-primary">Nouvelle session</a>
+</div>
+
+{% if sessions %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Cabinet</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Statut</th>
+                <th>Créé le</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sessions %}
+            <tr>
+                <td>{{ s.firm_name }}</td>
+                <td>{{ s.contact_name }}</td>
+                <td>{{ s.contact_email }}</td>
+                <td>
+                    {% if s.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">En attente</span>
+                    {% elif s.status == 'in_progress' %}
+                    <span class="badge bg-primary">En cours</span>
+                    {% elif s.status == 'completed' %}
+                    <span class="badge bg-success">Complété</span>
+                    {% endif %}
+                </td>
+                <td>{{ s.created_at }}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="copyLink('{{ request.base_url }}form/{{ s.token }}')">
+                        Copier le lien
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">Aucune session créée. Cliquez sur "Nouvelle session" pour commencer.</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyLink(url) {
+    navigator.clipboard.writeText(url).then(() => {
+        alert('Lien copié !');
+    });
+}
+</script>
+{% endblock %}

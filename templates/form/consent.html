@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Consentement — Vero{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2>Protection des renseignements personnels</h2>
+        <div class="card mt-3">
+            <div class="card-body">
+                <p>Conformément à la <strong>Loi 25 sur la protection des renseignements personnels</strong>,
+                nous vous informons que les informations collectées dans ce formulaire seront utilisées
+                exclusivement pour la création de votre site web professionnel.</p>
+                <p>Les données recueillies comprennent :</p>
+                <ul>
+                    <li>Vos informations personnelles (nom, prénom, courriel)</li>
+                    <li>Vos préférences de contenu et de design</li>
+                    <li>Votre logo et couleurs d'entreprise</li>
+                </ul>
+                <p>Ces informations seront conservées pour une durée maximale de 2 ans
+                et ne seront pas partagées avec des tiers sans votre consentement explicite.</p>
+
+                <form method="POST" action="/form/{{ token }}/consent">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="consent" name="consent_given" value="true" required>
+                        <label class="form-check-label" for="consent">
+                            <strong>J'accepte</strong> que mes renseignements personnels soient collectés et utilisés aux fins décrites ci-dessus.
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Continuer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

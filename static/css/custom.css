@@ -1,0 +1,53 @@
+/* Vero — Custom styles */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.card-selectable {
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card-selectable:hover {
+    border-color: #0d6efd;
+}
+
+.card-selectable.selected {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 0;
+    list-style: none;
+}
+
+.stepper li {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem 0;
+    border-bottom: 3px solid #dee2e6;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.stepper li.active {
+    border-bottom-color: #0d6efd;
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.stepper li.completed {
+    border-bottom-color: #198754;
+    color: #198754;
+}
