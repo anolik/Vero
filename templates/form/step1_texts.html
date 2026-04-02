@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Textes — Vero{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        {% include "form/_stepper.html" %}
+
+        <h2 class="mb-3">Selection des textes</h2>
+        <p class="text-muted mb-4">
+            Pour chaque section, choisissez le style de texte qui vous convient le mieux.
+            Vous pouvez ensuite le personnaliser si vous le souhaitez.
+        </p>
+
+        <form method="POST" action="/form/{{ token }}/step/1" id="step1Form">
+            {% for cat in categories %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ category_labels[cat] }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        {% for tpl in templates_by_cat.get(cat, []) %}
+                        <div class="col-md-4">
+                            <div class="card card-selectable h-100 {% if saved.get(cat ~ '_template') == tpl.id|string %}selected{% endif %}"
+                                 data-category="{{ cat }}"
+                                 data-template-id="{{ tpl.id }}"
+                                 data-content="{{ tpl.content }}"
+                                 onclick="selectTemplate('{{ cat }}', '{{ tpl.id }}', this)">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ tpl.title }}</h6>
+                                    <p class="card-text small text-muted">{{ tpl.content[:120] }}...</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <input type="hidden" name="{{ cat }}_template" id="{{ cat }}_template"
+                           value="{{ saved.get(cat ~ '_template', '') }}">
+
+                    <div class="mb-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="toggleCustomize('{{ cat }}')"
+                                id="btn_customize_{{ cat }}">
+                            Personnaliser
+                        </button>
+                    </div>
+
+                    <div id="customize_{{ cat }}" class="{% if not saved.get(cat ~ '_text') %}d-none{% endif %}">
+                        <textarea class="form-control" name="{{ cat }}_text" id="{{ cat }}_text"
+                                  rows="5" placeholder="Personnalisez le texte ici...">{{ saved.get(cat ~ '_text', '') }}</textarea>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                    Continuer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function selectTemplate(category, templateId, cardElement) {
+    // Remove selection from sibling cards
+    const cards = document.querySelectorAll(`[data-category="${category}"]`);
+    cards.forEach(c => c.classList.remove('selected'));
+
+    // Select this card
+    cardElement.classList.add('selected');
+
+    // Update hidden input
+    document.getElementById(category + '_template').value = templateId;
+
+    // Pre-fill textarea with template content
+    const content = cardElement.getAttribute('data-content');
+    const textarea = document.getElementById(category + '_text');
+    textarea.value = content;
+}
+
+function toggleCustomize(category) {
+    const el = document.getElementById('customize_' + category);
+    el.classList.toggle('d-none');
+}
+</script>
+{% endblock %}

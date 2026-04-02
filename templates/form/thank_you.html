@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Merci — Vero{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center py-5">
+        <h2 class="mb-3">Merci!</h2>
+        <p class="lead">
+            Vos informations ont ete soumises avec succes.
+        </p>
+        <p class="text-muted">
+            Notre equipe va maintenant preparer votre site web professionnel.
+            Vous recevrez un courriel lorsque celui-ci sera pret.
+        </p>
+        <div class="mt-4">
+            <a href="/form/{{ token }}" class="btn btn-outline-primary">Retour au formulaire</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

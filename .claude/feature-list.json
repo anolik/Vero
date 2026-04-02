@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "generated_at": "2026-04-01T20:30:00Z",
   "total_features": 20,
-  "completed_features": 6,
+  "completed_features": 15,
   "team_size": 5,
   "features": [
     {
@@ -70,7 +70,7 @@
       "id": "F006",
       "priority": "P0",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F003"
       ],
@@ -80,7 +80,7 @@
       "id": "F007",
       "priority": "P0",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F002",
         "F006"
@@ -91,7 +91,7 @@
       "id": "F008",
       "priority": "P0",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F006"
       ],
@@ -101,7 +101,7 @@
       "id": "F009",
       "priority": "P0",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F006"
       ],
@@ -111,7 +111,7 @@
       "id": "F010",
       "priority": "P0",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F006"
       ],
@@ -121,7 +121,7 @@
       "id": "F011",
       "priority": "P0",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F007",
         "F008",
@@ -145,7 +145,7 @@
       "id": "F014",
       "priority": "P1",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F006"
       ],
@@ -155,7 +155,7 @@
       "id": "F015",
       "priority": "P1",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F006",
         "F007"
@@ -166,7 +166,7 @@
       "id": "F016",
       "priority": "P1",
       "phase": 3,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F007",
         "F008"

@@ -1,0 +1,22 @@
+{# Stepper partial — include with: current_step, completed_steps, total_steps, token #}
+<ul class="stepper">
+    {% set steps = [
+        (1, "Textes"),
+        (2, "Identite"),
+        (3, "Image de marque"),
+        (4, "Domaine"),
+    ] %}
+    {% for num, label in steps %}
+        {% if num < current_step and num in completed_steps %}
+            <li class="completed">
+                <a href="/form/{{ token }}/step/{{ num }}" class="text-decoration-none text-success">
+                    {{ label }}
+                </a>
+            </li>
+        {% elif num == current_step %}
+            <li class="active">{{ label }}</li>
+        {% else %}
+            <li>{{ label }}</li>
+        {% endif %}
+    {% endfor %}
+</ul>

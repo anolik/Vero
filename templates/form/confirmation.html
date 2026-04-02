@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Confirmation — Vero{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <h2 class="mb-3">Recapitulatif</h2>
+        <p class="text-muted mb-4">
+            Veuillez verifier les informations ci-dessous avant de soumettre le formulaire.
+        </p>
+
+        {# ── Section 1: Textes ── #}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Textes</h5>
+                <a href="/form/{{ token }}/step/1" class="btn btn-outline-secondary btn-sm">Modifier</a>
+            </div>
+            <div class="card-body">
+                {% for cat in categories %}
+                <div class="{% if not loop.last %}mb-3 pb-3 border-bottom{% endif %}">
+                    <h6 class="text-muted">{{ category_labels[cat] }}</h6>
+                    {% set template_id = data.get(cat ~ '_template', '') %}
+                    {% set custom_text = data.get(cat ~ '_text', '') %}
+
+                    {% if template_id %}
+                        {% for tpl in templates_by_cat.get(cat, []) %}
+                            {% if tpl.id|string == template_id %}
+                                <small class="text-primary">{{ tpl.title }}</small>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if custom_text %}
+                        <p class="mb-0 mt-1" style="white-space: pre-line;">{{ custom_text }}</p>
+                    {% elif not template_id %}
+                        <p class="mb-0 text-muted fst-italic">Non renseigne</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# ── Section 2: Identite ── #}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Informations personnelles</h5>
+                <a href="/form/{{ token }}/step/2" class="btn btn-outline-secondary btn-sm">Modifier</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <strong>Prenom</strong><br>
+                        {{ data.get('first_name', '—') }}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <strong>Nom</strong><br>
+                        {{ data.get('last_name', '—') }}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <strong>Courriel</strong><br>
+                        {{ data.get('email', '—') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ── Section 3: Image de marque ── #}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Image de marque</h5>
+                <a href="/form/{{ token }}/step/3" class="btn btn-outline-secondary btn-sm">Modifier</a>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4 mb-3">
+                        <strong>Logo</strong><br>
+                        {% if existing_logo %}
+                            <img src="/{{ existing_logo['storage_path'] }}" alt="Logo" class="img-thumbnail mt-1" style="max-height: 80px;">
+                        {% else %}
+                            <span class="text-muted fst-italic">Aucun logo telecharge</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <strong>Couleur principale</strong><br>
+                        {% if data.get('primary_color') %}
+                            <span class="d-inline-block border rounded me-1" style="width: 20px; height: 20px; background: {{ data['primary_color'] }}; vertical-align: middle;"></span>
+                            {{ data['primary_color'] }}
+                        {% else %}
+                            <span class="text-muted fst-italic">Non definie</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <strong>Couleur secondaire</strong><br>
+                        {% if data.get('secondary_color') %}
+                            <span class="d-inline-block border rounded me-1" style="width: 20px; height: 20px; background: {{ data['secondary_color'] }}; vertical-align: middle;"></span>
+                            {{ data['secondary_color'] }}
+                        {% else %}
+                            <span class="text-muted fst-italic">Non definie</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ── Section 4: Domaine ── #}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Nom de domaine</h5>
+                <a href="/form/{{ token }}/step/4" class="btn btn-outline-secondary btn-sm">Modifier</a>
+            </div>
+            <div class="card-body">
+                {% if data.get('domain_option') == 'existing' %}
+                    <p class="mb-1"><strong>Option :</strong> Domaine existant</p>
+                {% elif data.get('domain_option') == 'new' %}
+                    <p class="mb-1"><strong>Option :</strong> Nouveau domaine souhaite</p>
+                {% else %}
+                    <p class="mb-1 text-muted fst-italic">Non renseigne</p>
+                {% endif %}
+                {% if data.get('domain_name') %}
+                    <p class="mb-0"><strong>Domaine :</strong> {{ data['domain_name'] }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# ── Submit ── #}
+        <div class="d-flex justify-content-between">
+            <a href="/form/{{ token }}/step/4" class="btn btn-outline-secondary">Retour</a>
+            <form method="POST" action="/form/{{ token }}/submit">
+                <button type="submit" class="btn btn-success btn-lg">Soumettre</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

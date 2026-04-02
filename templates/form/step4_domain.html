@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Domaine — Vero{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        {% include "form/_stepper.html" %}
+
+        <h2 class="mb-3">Nom de domaine</h2>
+        <p class="text-muted mb-4">
+            Indiquez si vous possedez deja un nom de domaine ou si vous souhaitez en obtenir un.
+        </p>
+
+        <form method="POST" action="/form/{{ token }}/step/4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="domain_option"
+                                   id="domain_existing" value="existing"
+                                   {% if saved.get('domain_option') == 'existing' %}checked{% endif %}
+                                   onchange="toggleDomainInput()" required>
+                            <label class="form-check-label" for="domain_existing">
+                                J'ai deja un nom de domaine
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="domain_option"
+                                   id="domain_new" value="new"
+                                   {% if saved.get('domain_option') == 'new' %}checked{% endif %}
+                                   onchange="toggleDomainInput()" required>
+                            <label class="form-check-label" for="domain_new">
+                                Je souhaite obtenir un nouveau nom de domaine
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="domain_name_group"
+                         class="mb-3 {% if not saved.get('domain_option') in ('existing', 'new') %}d-none{% endif %}">
+                        <label for="domain_name" class="form-label" id="domain_name_label">
+                            {% if saved.get('domain_option') == 'existing' %}
+                                Votre nom de domaine actuel
+                            {% elif saved.get('domain_option') == 'new' %}
+                                Nom de domaine souhaite
+                            {% else %}
+                                Nom de domaine
+                            {% endif %}
+                        </label>
+                        <input type="text" class="form-control" id="domain_name" name="domain_name"
+                               value="{{ saved.get('domain_name', '') }}"
+                               placeholder="exemple.ca">
+                        <div class="form-text">Exemple : monsite.ca, monnom.com</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/form/{{ token }}/step/3" class="btn btn-outline-secondary">Retour</a>
+                <button type="submit" class="btn btn-primary">Continuer</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleDomainInput() {
+    const group = document.getElementById('domain_name_group');
+    const label = document.getElementById('domain_name_label');
+    const existing = document.getElementById('domain_existing');
+
+    group.classList.remove('d-none');
+
+    if (existing.checked) {
+        label.textContent = 'Votre nom de domaine actuel';
+    } else {
+        label.textContent = 'Nom de domaine souhaite';
+    }
+}
+</script>
+{% endblock %}
