@@ -65,7 +65,10 @@ def get_db(db_path: str | None = None) -> sqlite3.Connection:
 
 
 def init_db(db_path: str | None = None) -> None:
-    """Initialize database schema."""
+    """Initialize database schema and seed data."""
+    from seed_data import seed_text_templates
+
     conn = get_db(db_path)
     conn.executescript(SCHEMA)
+    seed_text_templates(conn)
     conn.close()
