@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "generated_at": "2026-04-01T20:30:00Z",
   "total_features": 20,
-  "completed_features": 4,
+  "completed_features": 6,
   "team_size": 5,
   "features": [
     {
@@ -48,7 +48,7 @@
       "id": "F004",
       "priority": "P0",
       "phase": 2,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F001",
         "F002"
@@ -59,7 +59,7 @@
       "id": "F005",
       "priority": "P0",
       "phase": 2,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F003",
         "F004"
