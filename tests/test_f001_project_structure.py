@@ -95,4 +95,4 @@ def test_static_files_served(client):
 def test_admin_requires_auth(client):
     """Admin endpoint should require authentication."""
     response = client.get("/admin", follow_redirects=False)
-    assert response.status_code == 401
+    assert response.status_code == 303  # redirect to login

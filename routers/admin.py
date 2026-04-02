@@ -1,26 +1,61 @@
+import hashlib
 import json as json_module
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Request, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Request, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
-from config import ADMIN_USERNAME, ADMIN_PASSWORD, TOKEN_EXPIRY_DAYS
+from config import ADMIN_USERNAME, ADMIN_PASSWORD, TOKEN_EXPIRY_DAYS, SECRET_KEY
 from database import get_db
 
 router = APIRouter(prefix="/admin")
-security = HTTPBasic()
 
 
-def verify_admin(credentials: HTTPBasicCredentials = Depends(security)) -> str:
-    """Verify admin credentials via HTTP Basic Auth."""
-    if not secrets.compare_digest(credentials.username, ADMIN_USERNAME):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Basic"})
-    if not secrets.compare_digest(credentials.password, ADMIN_PASSWORD):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Basic"})
-    return credentials.username
+def _make_session_token() -> str:
+    return hashlib.sha256(f"{ADMIN_USERNAME}:{ADMIN_PASSWORD}:{SECRET_KEY}".encode()).hexdigest()
+
+
+class NotAuthenticated(Exception):
+    pass
+
+
+def verify_admin(request: Request) -> str:
+    """Verify admin via session cookie."""
+    token = request.cookies.get("admin_session")
+    if token != _make_session_token():
+        raise NotAuthenticated()
+    return ADMIN_USERNAME
+
+
+@router.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request, error: str = ""):
+    return request.app.state.templates.TemplateResponse(
+        request, "admin/login.html", {"error": error},
+    )
+
+
+@router.post("/login")
+async def login_post(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...),
+):
+    if secrets.compare_digest(username, ADMIN_USERNAME) and secrets.compare_digest(password, ADMIN_PASSWORD):
+        response = RedirectResponse(url="/admin", status_code=303)
+        response.set_cookie("admin_session", _make_session_token(), httponly=True, max_age=86400)
+        return response
+    return request.app.state.templates.TemplateResponse(
+        request, "admin/login.html", {"error": "Identifiants invalides"}, status_code=401,
+    )
+
+
+@router.get("/logout")
+async def logout():
+    response = RedirectResponse(url="/admin/login", status_code=303)
+    response.delete_cookie("admin_session")
+    return response
 
 
 @router.get("", response_class=HTMLResponse)

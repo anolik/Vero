@@ -11,6 +11,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database import init_db, get_db
 
 
+def _login_cookies(client):
+    resp = client.post("/admin/login", data={"username": "admin", "password": "changeme"}, follow_redirects=False)
+    return resp.cookies
+
+
 @pytest.fixture
 def db(tmp_path, monkeypatch):
     db_path = str(tmp_path / "test.db")
@@ -108,7 +113,7 @@ def test_admin_create_session_redirects(client):
     response = client.post(
         "/admin/create",
         data={"firm_name": "Cabinet X", "contact_name": "Marie", "contact_email": "m@x.ca"},
-        auth=("admin", "changeme"),
+        cookies=_login_cookies(client),
         follow_redirects=False,
     )
     assert response.status_code == 303
@@ -120,7 +125,7 @@ def test_admin_create_session_inserts_db(client, db):
     client.post(
         "/admin/create",
         data={"firm_name": "Cabinet Y", "contact_name": "Pierre", "contact_email": "p@y.ca"},
-        auth=("admin", "changeme"),
+        cookies=_login_cookies(client),
     )
     conn = get_db(db)
     sessions = conn.execute("SELECT * FROM sessions WHERE firm_name = 'Cabinet Y'").fetchall()
@@ -134,7 +139,7 @@ def test_admin_create_session_sets_expiry(client, db):
     client.post(
         "/admin/create",
         data={"firm_name": "Cabinet Z", "contact_name": "Luc", "contact_email": "l@z.ca"},
-        auth=("admin", "changeme"),
+        cookies=_login_cookies(client),
     )
     conn = get_db(db)
     session = conn.execute("SELECT * FROM sessions WHERE firm_name = 'Cabinet Z'").fetchone()

@@ -39,7 +39,17 @@ def client(db, tmp_path):
     return TestClient(main.app)
 
 
-AUTH = ("admin", "changeme")
+def _login_cookies(client):
+    resp = client.post("/admin/login", data={"username": "admin", "password": "changeme"}, follow_redirects=False)
+    return resp.cookies
+
+
+def _admin_get(client, url):
+    return client.get(url, cookies=_login_cookies(client))
+
+
+def _admin_post(client, url, **kwargs):
+    return client.post(url, cookies=_login_cookies(client), **kwargs)
 
 
 def _create_completed_session(client, db):
@@ -48,7 +58,7 @@ def _create_completed_session(client, db):
     client.post(
         "/admin/create",
         data={"firm_name": "Cabinet Export", "contact_name": "Pierre Roy", "contact_email": "p@e.ca"},
-        auth=AUTH,
+        cookies=_login_cookies(client),
     )
     conn = get_db(db)
     session = conn.execute("SELECT * FROM sessions ORDER BY id DESC LIMIT 1").fetchone()
@@ -91,7 +101,7 @@ def _create_completed_session(client, db):
 class TestExportJSON:
     def test_export_returns_valid_json(self, client, db):
         sid, token = _create_completed_session(client, db)
-        resp = client.get(f"/admin/sessions/{sid}/export", auth=AUTH)
+        resp = client.get(f"/admin/sessions/{sid}/export", cookies=_login_cookies(client))
         assert resp.status_code == 200
         data = resp.json()
         assert "meta" in data
@@ -103,20 +113,20 @@ class TestExportJSON:
 
     def test_export_meta_section(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        data = client.get(f"/admin/sessions/{sid}/export", auth=AUTH).json()
+        data = client.get(f"/admin/sessions/{sid}/export", cookies=_login_cookies(client)).json()
         assert data["meta"]["schema_version"] == "1.0"
         assert data["meta"]["status"] == "completed"
         assert data["meta"]["firm_name"] == "Cabinet Export"
 
     def test_export_identity_section(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        data = client.get(f"/admin/sessions/{sid}/export", auth=AUTH).json()
+        data = client.get(f"/admin/sessions/{sid}/export", cookies=_login_cookies(client)).json()
         assert data["identity"]["first_name"] == "Pierre"
         assert data["identity"]["last_name"] == "Roy"
 
     def test_export_content_has_5_categories(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        data = client.get(f"/admin/sessions/{sid}/export", auth=AUTH).json()
+        data = client.get(f"/admin/sessions/{sid}/export", cookies=_login_cookies(client)).json()
         assert len(data["content"]) == 5
         for cat in ["biography", "services", "client_approach", "credentials", "legal"]:
             assert cat in data["content"]
@@ -125,12 +135,12 @@ class TestExportJSON:
 
     def test_export_domain_section(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        data = client.get(f"/admin/sessions/{sid}/export", auth=AUTH).json()
+        data = client.get(f"/admin/sessions/{sid}/export", cookies=_login_cookies(client)).json()
         assert data["domain"]["requested_domain"] == "pierre-roy.ca"
 
     def test_export_privacy_section(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        data = client.get(f"/admin/sessions/{sid}/export", auth=AUTH).json()
+        data = client.get(f"/admin/sessions/{sid}/export", cookies=_login_cookies(client)).json()
         assert data["privacy"]["consent_given"] is True
         assert data["privacy"]["data_purpose"] == "website_creation"
 
@@ -139,18 +149,23 @@ class TestExportJSON:
         client.post(
             "/admin/create",
             data={"firm_name": "Incomplete", "contact_name": "X", "contact_email": "x@x.ca"},
-            auth=AUTH,
+            cookies=_login_cookies(client),
         )
         conn = get_db(db)
         session = conn.execute("SELECT id FROM sessions WHERE firm_name = 'Incomplete'").fetchone()
         conn.close()
-        resp = client.get(f"/admin/sessions/{session['id']}/export", auth=AUTH)
+        resp = client.get(f"/admin/sessions/{session['id']}/export", cookies=_login_cookies(client))
         assert resp.status_code == 400
 
     def test_export_requires_auth(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        resp = client.get(f"/admin/sessions/{sid}/export")
-        assert resp.status_code == 401
+        # Use a fresh client with no cookies
+        from fastapi.testclient import TestClient
+        from main import app
+        fresh = TestClient(app)
+        resp = fresh.get(f"/admin/sessions/{sid}/export", follow_redirects=False)
+        assert resp.status_code == 303
+        assert "/login" in resp.headers["location"]
 
 
 # ── F019: Download JSON as file ──
@@ -158,13 +173,13 @@ class TestExportJSON:
 class TestDownloadJSON:
     def test_download_has_content_disposition(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        resp = client.get(f"/admin/sessions/{sid}/download", auth=AUTH)
+        resp = client.get(f"/admin/sessions/{sid}/download", cookies=_login_cookies(client))
         assert resp.status_code == 200
         assert "attachment" in resp.headers.get("content-disposition", "")
 
     def test_download_filename_format(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        resp = client.get(f"/admin/sessions/{sid}/download", auth=AUTH)
+        resp = client.get(f"/admin/sessions/{sid}/download", cookies=_login_cookies(client))
         disposition = resp.headers.get("content-disposition", "")
         assert "Cabinet_Export" in disposition
         assert "Pierre_Roy" in disposition
@@ -176,23 +191,27 @@ class TestDownloadJSON:
 class TestSessionDetail:
     def test_detail_shows_session_info(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        resp = client.get(f"/admin/sessions/{sid}", auth=AUTH)
+        resp = client.get(f"/admin/sessions/{sid}", cookies=_login_cookies(client))
         assert resp.status_code == 200
         assert "Cabinet Export" in resp.text
         assert "Pierre Roy" in resp.text
 
     def test_detail_shows_consent_info(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        resp = client.get(f"/admin/sessions/{sid}", auth=AUTH)
+        resp = client.get(f"/admin/sessions/{sid}", cookies=_login_cookies(client))
         assert "Oui" in resp.text  # consent given
 
     def test_detail_requires_auth(self, client, db):
         sid, _ = _create_completed_session(client, db)
-        resp = client.get(f"/admin/sessions/{sid}")
-        assert resp.status_code == 401
+        from fastapi.testclient import TestClient
+        from main import app
+        fresh = TestClient(app)
+        resp = fresh.get(f"/admin/sessions/{sid}", follow_redirects=False)
+        assert resp.status_code == 303
+        assert "/login" in resp.headers["location"]
 
     def test_detail_nonexistent_returns_404(self, client):
-        resp = client.get("/admin/sessions/99999", auth=AUTH)
+        resp = _admin_get(client, "/admin/sessions/99999")
         assert resp.status_code == 404
 
 
