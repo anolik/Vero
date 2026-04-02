@@ -184,14 +184,35 @@ def _build_export_json(session_id: int) -> dict:
     for row in form_data:
         data[row["field_key"]] = row["field_value"]
 
+    variant_names = {1: "professionnel", 2: "chaleureux", 3: "concis"}
+
+    # Look up actual variant numbers from template IDs
+    template_ids = []
     categories = ["biography", "services", "client_approach", "credentials", "legal"]
+    for cat in categories:
+        tid = data.get(f"{cat}_template")
+        if tid:
+            template_ids.append(int(tid))
+
+    variant_map = {}
+    if template_ids:
+        db2 = get_db()
+        placeholders = ",".join("?" * len(template_ids))
+        rows = db2.execute(
+            f"SELECT id, variant FROM text_templates WHERE id IN ({placeholders})",
+            template_ids,
+        ).fetchall()
+        db2.close()
+        variant_map = {row["id"]: row["variant"] for row in rows}
+
     content = {}
     for cat in categories:
+        tid = int(data.get(f"{cat}_template", "0"))
+        variant = variant_map.get(tid, 1)
         content[cat] = {
             "category": cat,
-            "selected_template": int(data.get(f"{cat}_template", "0")),
-            "variant_name": ["professionnel", "chaleureux", "concis"][int(data.get(f"{cat}_template", "1")) - 1]
-                if data.get(f"{cat}_template") else "professionnel",
+            "selected_template": tid,
+            "variant_name": variant_names.get(variant, "professionnel"),
             "final_text": data.get(f"{cat}_text", ""),
         }
 
