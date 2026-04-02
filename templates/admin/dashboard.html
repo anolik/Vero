@@ -37,9 +37,15 @@
                 </td>
                 <td>{{ s.created_at }}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="copyLink('{{ request.base_url }}form/{{ s.token }}')">
-                        Copier le lien
-                    </button>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary" onclick="copyLink('{{ request.base_url }}form/{{ s.token }}')">
+                            Copier le lien
+                        </button>
+                        <a href="/admin/sessions/{{ s.id }}" class="btn btn-outline-info">Détails</a>
+                        {% if s.status == 'completed' %}
+                        <a href="/admin/sessions/{{ s.id }}/export" class="btn btn-outline-success" target="_blank">JSON</a>
+                        {% endif %}
+                    </div>
                 </td>
             </tr>
             {% endfor %}

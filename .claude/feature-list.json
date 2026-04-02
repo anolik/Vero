@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "generated_at": "2026-04-01T20:30:00Z",
   "total_features": 20,
-  "completed_features": 15,
+  "completed_features": 20,
   "team_size": 5,
   "features": [
     {
@@ -134,7 +134,7 @@
       "id": "F012",
       "priority": "P0",
       "phase": 4,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F004",
         "F011"
@@ -177,7 +177,7 @@
       "id": "F017",
       "priority": "P1",
       "phase": 4,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F004"
       ],
@@ -187,7 +187,7 @@
       "id": "F018",
       "priority": "P2",
       "phase": 4,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F001"
       ],
@@ -197,7 +197,7 @@
       "id": "F019",
       "priority": "P2",
       "phase": 4,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F012"
       ],
@@ -207,7 +207,7 @@
       "id": "F020",
       "priority": "P2",
       "phase": 4,
-      "passes": false,
+      "passes": true,
       "dependencies": [
         "F007"
       ],

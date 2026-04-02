@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Détails session — Vero{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ session.firm_name }} — {{ session.contact_name }}</h2>
+    <div class="d-flex gap-2">
+        {% if session.status == 'completed' %}
+        <a href="/admin/sessions/{{ session.id }}/export" class="btn btn-outline-primary" target="_blank">Voir JSON</a>
+        <a href="/admin/sessions/{{ session.id }}/download" class="btn btn-primary">Télécharger JSON</a>
+        {% endif %}
+        <a href="/admin" class="btn btn-outline-secondary">Retour</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">Informations de session</div>
+            <div class="card-body">
+                <p><strong>Cabinet :</strong> {{ session.firm_name }}</p>
+                <p><strong>Contact :</strong> {{ session.contact_name }}</p>
+                <p><strong>Courriel :</strong> {{ session.contact_email }}</p>
+                <p><strong>Statut :</strong>
+                    {% if session.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">En attente</span>
+                    {% elif session.status == 'in_progress' %}
+                    <span class="badge bg-primary">En cours</span>
+                    {% elif session.status == 'completed' %}
+                    <span class="badge bg-success">Complété</span>
+                    {% endif %}
+                </p>
+                <p><strong>Créé le :</strong> {{ session.created_at }}</p>
+                <p><strong>Expire le :</strong> {{ session.expires_at }}</p>
+            </div>
+        </div>
+
+        {% if consent %}
+        <div class="card mb-3">
+            <div class="card-header">Consentement Loi 25</div>
+            <div class="card-body">
+                <p><strong>Consenti :</strong> {{ "Oui" if consent.consent_given else "Non" }}</p>
+                <p><strong>Date :</strong> {{ consent.consent_timestamp }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if upload %}
+        <div class="card mb-3">
+            <div class="card-header">Logo</div>
+            <div class="card-body text-center">
+                <img src="/{{ upload.storage_path }}" alt="Logo" class="img-fluid" style="max-height: 200px;">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-8">
+        {% if data_by_step.get(2) %}
+        <div class="card mb-3">
+            <div class="card-header">Identité du représentant</div>
+            <div class="card-body">
+                <p><strong>Prénom :</strong> {{ data_by_step[2].get('first_name', '') }}</p>
+                <p><strong>Nom :</strong> {{ data_by_step[2].get('last_name', '') }}</p>
+                <p><strong>Courriel :</strong> {{ data_by_step[2].get('email', '') }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if data_by_step.get(3) %}
+        <div class="card mb-3">
+            <div class="card-header">Branding</div>
+            <div class="card-body">
+                <p><strong>Couleur primaire :</strong>
+                    <span style="display: inline-block; width: 24px; height: 24px; background: {{ data_by_step[3].get('primary_color', '#000') }}; border: 1px solid #ccc; vertical-align: middle;"></span>
+                    {{ data_by_step[3].get('primary_color', 'Non spécifié') }}
+                </p>
+                <p><strong>Couleur secondaire :</strong>
+                    <span style="display: inline-block; width: 24px; height: 24px; background: {{ data_by_step[3].get('secondary_color', '#000') }}; border: 1px solid #ccc; vertical-align: middle;"></span>
+                    {{ data_by_step[3].get('secondary_color', 'Non spécifié') }}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if data_by_step.get(4) %}
+        <div class="card mb-3">
+            <div class="card-header">Nom de domaine</div>
+            <div class="card-body">
+                <p><strong>Option :</strong> {{ "Existant" if data_by_step[4].get('domain_option') == 'existing' else "Nouveau souhaité" }}</p>
+                <p><strong>Domaine :</strong> {{ data_by_step[4].get('domain_name', 'Non spécifié') }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if data_by_step.get(1) %}
+        <div class="card mb-3">
+            <div class="card-header">Textes sélectionnés</div>
+            <div class="card-body">
+                {% for cat in ['biography', 'services', 'client_approach', 'credentials', 'legal'] %}
+                {% set text_key = cat ~ '_text' %}
+                {% if data_by_step[1].get(text_key) %}
+                <div class="mb-3">
+                    <h6>{{ cat | replace('_', ' ') | title }}</h6>
+                    <p class="text-muted small">{{ data_by_step[1][text_key][:200] }}{% if data_by_step[1][text_key]|length > 200 %}...{% endif %}</p>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
