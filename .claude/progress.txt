@@ -1,0 +1,21 @@
+# Vero Progress Log
+
+## Session 0: Initialization
+Date: 2026-04-01
+Status: Project initialized
+
+Files created:
+- CLAUDE.md
+- .claude/prd.md (20 features)
+- .claude/workflow.md (4 phases)
+- .claude/feature-list.json (index)
+- .claude/features/phase-{1-4}.json (detail files)
+- .claude/features/completed.json
+- .claude/assumptions.md (8 assumptions)
+- .claude/lessons.md (scaffolded)
+- .claude/scripts/init.sh
+- README.md
+- .gitignore
+
+Total features: 20 (13 P0, 4 P1, 3 P2)
+Next: F001 - Initialisation du projet et structure FastAPI

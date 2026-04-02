@@ -1,0 +1,122 @@
+{
+  "phase": 1,
+  "phase_name": "Foundation",
+  "features": [
+    {
+      "id": "F001",
+      "category": "setup",
+      "priority": "P0",
+      "agents": [
+        { "type": "backend-developer", "model": "sonnet", "role": "Structure projet FastAPI avec Jinja2 et Bootstrap 5" }
+      ],
+      "description": "Mettre en place la structure du projet FastAPI avec SQLite3, Jinja2, et Bootstrap 5 CDN. Configuration via .env.",
+      "acceptance_criteria": [
+        "Projet FastAPI fonctionnel avec structure de dossiers standard",
+        "SQLite3 initialisé avec le schéma de base de données",
+        "Templates Jinja2 avec layout de base Bootstrap 5",
+        "Configuration via variables d'environnement (.env)"
+      ],
+      "verification_steps": [
+        "uvicorn main:app --reload démarre sans erreur",
+        "La page d'accueil s'affiche avec le layout Bootstrap"
+      ],
+      "dependencies": [],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F002",
+      "category": "data",
+      "priority": "P0",
+      "agents": [
+        { "type": "backend-developer", "model": "sonnet", "role": "Créer le schéma SQLite3 avec toutes les tables et contraintes" }
+      ],
+      "description": "Créer le schéma de base de données avec les tables sessions, form_data, uploads, consent_logs et text_templates. Index sur sessions.token.",
+      "acceptance_criteria": [
+        "Table sessions: id, token, firm_name, contact_name, contact_email, status, expires_at, created_at",
+        "Table form_data: id, session_id (FK), step, field_key, field_value, updated_at",
+        "Table uploads: id, session_id (FK), file_type, filename, storage_path, uploaded_at",
+        "Table consent_logs: id, session_id (FK), consent_given, consent_timestamp, consent_ip_hash",
+        "Table text_templates: id, category, variant, title, content",
+        "Index sur sessions.token",
+        "Données seed pour 15 textes pré-rédigés"
+      ],
+      "verification_steps": [
+        "Le schéma se crée sans erreur au démarrage",
+        "Les 15 templates de texte sont pré-insérés",
+        "Les contraintes FK fonctionnent"
+      ],
+      "dependencies": ["F001"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F003",
+      "category": "auth",
+      "priority": "P0",
+      "agents": [
+        { "type": "backend-developer", "model": "sonnet", "role": "Implémenter la génération et validation de tokens UUID4" },
+        { "type": "security-engineer", "model": "sonnet", "role": "Vérifier la sécurité du mécanisme de tokens" }
+      ],
+      "description": "Générer des tokens UUID4 uniques lors de la création de session. Vérifier la validité et l'expiration à chaque accès.",
+      "acceptance_criteria": [
+        "Génération UUID4 à la création de session",
+        "Vérification du token à chaque requête sur /form/{token}",
+        "Retour 404 si token invalide",
+        "Retour 410 Gone si token expiré",
+        "Expiration configurable (défaut: 30 jours)"
+      ],
+      "verification_steps": [
+        "Token valide affiche le formulaire",
+        "Token invalide retourne 404",
+        "Token expiré retourne 410"
+      ],
+      "dependencies": ["F002"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F013",
+      "category": "data",
+      "priority": "P0",
+      "agents": [
+        { "type": "prompt-engineer", "model": "opus", "role": "Rédiger les 15 textes pré-rédigés pour le secteur financier québécois" }
+      ],
+      "description": "Rédiger les 15 textes pré-rédigés (5 catégories x 3 variantes) adaptés au secteur des services financiers (fonds communs et assurance de personnes, marché québécois).",
+      "acceptance_criteria": [
+        "3 variantes par catégorie: professionnel, chaleureux, concis",
+        "Textes en français, adaptés au marché québécois",
+        "Cat 1 (Biographie): parcours, expérience, formation",
+        "Cat 2 (Services): fonds communs, assurance de personnes, planification financière",
+        "Cat 3 (Approche client): philosophie, valeurs, engagement",
+        "Cat 4 (Accréditations): titres professionnels, certifications, affiliations",
+        "Cat 5 (Mentions légales): disclaimers réglementaires, conformité AMF",
+        "Textes réalistes et utilisables en production"
+      ],
+      "verification_steps": [
+        "15 textes présents dans la table text_templates",
+        "Chaque texte est cohérent avec sa catégorie et son ton",
+        "Les textes mentionnent les bons produits (fonds communs, assurance de personnes)"
+      ],
+      "dependencies": ["F002"],
+      "estimated_complexity": "L",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    }
+  ]
+}

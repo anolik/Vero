@@ -1,0 +1,60 @@
+{
+  "phase": 2,
+  "phase_name": "Admin",
+  "features": [
+    {
+      "id": "F004",
+      "category": "ui",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Dashboard admin avec HTTP Basic Auth et tableau de sessions" }
+      ],
+      "description": "Dashboard admin protégé par HTTP Basic Auth listant toutes les sessions avec leur statut.",
+      "acceptance_criteria": [
+        "Route /admin protégée par HTTP Basic Auth (credentials via .env)",
+        "Tableau listant: nom cabinet, contact, email, statut, date création, lien unique",
+        "Badges de statut colorés (pending=jaune, in_progress=bleu, completed=vert)",
+        "Bouton Copier le lien pour chaque session"
+      ],
+      "verification_steps": [
+        "Accès à /admin demande les credentials",
+        "Credentials invalides = rejet",
+        "Le tableau affiche les sessions existantes avec bon statut"
+      ],
+      "dependencies": ["F001", "F002"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F005",
+      "category": "ui",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Formulaire de création de session admin" }
+      ],
+      "description": "Formulaire admin pour créer une nouvelle session (nom cabinet, nom contact, email contact).",
+      "acceptance_criteria": [
+        "Formulaire avec champs: nom du cabinet, nom du contact, email du contact",
+        "Validation des champs (email valide, champs requis)",
+        "Après soumission: session créée, token généré, lien unique affiché",
+        "Redirection vers le dashboard avec la nouvelle session visible"
+      ],
+      "verification_steps": [
+        "Remplir et soumettre le formulaire crée une session en DB",
+        "Le lien unique est affiché et fonctionnel",
+        "La validation rejette un email invalide"
+      ],
+      "dependencies": ["F003", "F004"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    }
+  ]
+}

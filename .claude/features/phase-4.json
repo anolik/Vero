@@ -1,0 +1,133 @@
+{
+  "phase": 4,
+  "phase_name": "Export et finition",
+  "features": [
+    {
+      "id": "F012",
+      "category": "api",
+      "priority": "P0",
+      "agents": [
+        { "type": "backend-developer", "model": "sonnet", "role": "Endpoint export JSON structuré pour agent AI WordPress" }
+      ],
+      "description": "Endpoint admin qui génère le JSON structuré contenant toutes les informations collectées.",
+      "acceptance_criteria": [
+        "Route GET /admin/sessions/{id}/export retourne le JSON",
+        "Schéma JSON respecté (meta, identity, domain, branding, content, privacy)",
+        "Chaque section content inclut selected_template et final_text",
+        "logo_path est un chemin relatif valide",
+        "Disponible uniquement pour sessions completed",
+        "Bouton Exporter JSON dans le dashboard admin"
+      ],
+      "verification_steps": [
+        "Export session complétée retourne JSON valide",
+        "JSON contient toutes les sections attendues",
+        "Export session non complétée retourne erreur 400"
+      ],
+      "dependencies": ["F004", "F011"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F017",
+      "category": "ui",
+      "priority": "P1",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Page détail session admin avec preview données" }
+      ],
+      "description": "Page de détail admin permettant de voir toutes les réponses d'une session.",
+      "acceptance_criteria": [
+        "Route /admin/sessions/{id} affiche toutes les données",
+        "Affichage lisible des textes, identité, branding, domaine",
+        "Preview du logo uploadé",
+        "Statut de consentement Loi 25"
+      ],
+      "verification_steps": [
+        "Page détail affiche correctement toutes les données",
+        "Logo visible",
+        "Info consentement présente"
+      ],
+      "dependencies": ["F004"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F018",
+      "category": "ui",
+      "priority": "P2",
+      "agents": [
+        { "type": "frontend-developer", "model": "sonnet", "role": "Landing page simple" }
+      ],
+      "description": "Page d'accueil simple présentant le projet avec lien vers l'admin.",
+      "acceptance_criteria": [
+        "Page / avec branding Vero",
+        "Lien vers /admin",
+        "Description courte du processus"
+      ],
+      "verification_steps": [
+        "Page d'accueil s'affiche correctement"
+      ],
+      "dependencies": ["F001"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F019",
+      "category": "api",
+      "priority": "P2",
+      "agents": [
+        { "type": "backend-developer", "model": "sonnet", "role": "Téléchargement fichier JSON" }
+      ],
+      "description": "Télécharger le JSON comme fichier .json avec Content-Disposition.",
+      "acceptance_criteria": [
+        "Header Content-Disposition: attachment",
+        "Nom de fichier: {firm_name}_{contact_name}_{date}.json"
+      ],
+      "verification_steps": [
+        "Clic Télécharger JSON déclenche un téléchargement avec bon nom"
+      ],
+      "dependencies": ["F012"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F020",
+      "category": "ui",
+      "priority": "P2",
+      "agents": [
+        { "type": "frontend-developer", "model": "sonnet", "role": "Responsive mobile pour le formulaire" }
+      ],
+      "description": "Le formulaire représentant doit être utilisable sur mobile et tablette.",
+      "acceptance_criteria": [
+        "Layout responsive via Bootstrap 5 grid",
+        "Cards de texte empilées sur mobile",
+        "Color picker et upload fonctionnels sur mobile"
+      ],
+      "verification_steps": [
+        "Formulaire lisible et utilisable à 375px de large"
+      ],
+      "dependencies": ["F007"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    }
+  ]
+}

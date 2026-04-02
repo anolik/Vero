@@ -1,0 +1,258 @@
+{
+  "phase": 3,
+  "phase_name": "Formulaire représentant",
+  "features": [
+    {
+      "id": "F006",
+      "category": "core",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Page de consentement Loi 25 avec enregistrement" },
+        { "type": "security-engineer", "model": "sonnet", "role": "Vérifier conformité Loi 25" }
+      ],
+      "description": "Page de consentement obligatoire avant l'accès au formulaire. Checkbox + timestamp + hash IP.",
+      "acceptance_criteria": [
+        "Affichée à la première visite sur /form/{token}",
+        "Texte clair sur l'utilisation des données",
+        "Checkbox J'accepte obligatoire",
+        "Enregistrement du consentement (timestamp + hash IP) dans consent_logs",
+        "Redirection vers étape 1 après acceptation",
+        "Si déjà consenti, redirection directe vers dernière étape non complétée"
+      ],
+      "verification_steps": [
+        "Premier accès affiche la page de consentement",
+        "Impossible de continuer sans cocher la case",
+        "consent_logs contient l'enregistrement après acceptation",
+        "Retour sur le lien ne re-demande pas le consentement"
+      ],
+      "dependencies": ["F003"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F007",
+      "category": "core",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "opus", "role": "Interface de sélection des textes avec cartes et personnalisation" }
+      ],
+      "description": "Interface de sélection des textes pré-rédigés pour les 5 catégories. 3 variantes par catégorie avec possibilité de personnalisation.",
+      "acceptance_criteria": [
+        "5 sections, une par catégorie",
+        "3 cartes par section (professionnel / chaleureux / concis)",
+        "Sélection par clic sur la carte",
+        "Bouton Personnaliser ouvrant un textarea pré-rempli",
+        "Sauvegarde du template sélectionné ET du texte final",
+        "POST vers serveur → sauvegarde DB → redirection étape 2"
+      ],
+      "verification_steps": [
+        "5 catégories affichées avec 3 variantes chacune",
+        "Sélection met à jour le visuel (carte active)",
+        "Textarea s'ouvre avec texte pré-rempli",
+        "Modification du texte sauvegardée correctement",
+        "Données en DB après soumission"
+      ],
+      "dependencies": ["F002", "F006"],
+      "estimated_complexity": "L",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F008",
+      "category": "core",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Formulaire infos personnelles avec validation" }
+      ],
+      "description": "Collecte du nom, prénom et email du représentant pour Loi 25 et contenu du site.",
+      "acceptance_criteria": [
+        "Champs: prénom, nom, email",
+        "Validation côté serveur (champs requis, format email)",
+        "Validation côté client (HTML5)",
+        "POST → sauvegarde DB → redirection étape 3"
+      ],
+      "verification_steps": [
+        "Les champs s'affichent avec labels appropriés",
+        "Soumission sans email valide est rejetée",
+        "Données en DB après soumission"
+      ],
+      "dependencies": ["F006"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F009",
+      "category": "core",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Upload logo et color picker avec preview" }
+      ],
+      "description": "Upload du logo et sélection des couleurs primaire et secondaire.",
+      "acceptance_criteria": [
+        "Upload logo (PNG, JPG, SVG) avec preview",
+        "Validation taille max (5 MB) et types autorisés",
+        "Stockage dans /uploads/{token}/",
+        "Deux color pickers natifs: couleur primaire et secondaire",
+        "Preview live des couleurs",
+        "Logo et couleurs optionnels",
+        "POST → sauvegarde fichier + données DB → redirection étape 4"
+      ],
+      "verification_steps": [
+        "Upload PNG affiche la preview",
+        "Fichier > 5MB rejeté avec message",
+        "Color pickers fonctionnent avec preview",
+        "Fichier enregistré dans le bon dossier"
+      ],
+      "dependencies": ["F006"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F010",
+      "category": "core",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Formulaire nom de domaine avec logique conditionnelle" }
+      ],
+      "description": "Le représentant indique s'il a un nom de domaine existant ou en souhaite un nouveau.",
+      "acceptance_criteria": [
+        "Radio: J'ai déjà un domaine / Je souhaite un nouveau domaine",
+        "Si existant: champ pour saisir le domaine actuel",
+        "Si nouveau: champ pour saisir le domaine souhaité",
+        "Validation basique du format de domaine",
+        "POST → sauvegarde DB → page de confirmation"
+      ],
+      "verification_steps": [
+        "Le choix radio affiche le bon champ conditionnel",
+        "Validation rejette un format invalide",
+        "Données en DB après soumission"
+      ],
+      "dependencies": ["F006"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F011",
+      "category": "core",
+      "priority": "P0",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Page de confirmation avec récapitulatif complet" }
+      ],
+      "description": "Récapitulatif de toutes les informations saisies avec possibilité de modifier chaque section.",
+      "acceptance_criteria": [
+        "Récapitulatif complet: textes, identité, branding, domaine",
+        "Bouton Modifier par section (retour à l'étape)",
+        "Bouton Confirmer et soumettre final",
+        "Statut session → completed après confirmation",
+        "Message de remerciement post-confirmation"
+      ],
+      "verification_steps": [
+        "Récapitulatif affiche toutes les données correctement",
+        "Bouton Modifier renvoie à la bonne étape",
+        "Statut en DB passe à completed"
+      ],
+      "dependencies": ["F007", "F008", "F009", "F010"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F014",
+      "category": "ui",
+      "priority": "P1",
+      "agents": [
+        { "type": "frontend-developer", "model": "sonnet", "role": "Stepper visuel de progression du wizard" }
+      ],
+      "description": "Barre de progression visuelle indiquant l'étape courante du formulaire.",
+      "acceptance_criteria": [
+        "Stepper visuel en haut du formulaire avec 4 étapes nommées",
+        "Étape courante mise en évidence",
+        "Étapes complétées marquées visuellement",
+        "Navigation arrière via le stepper"
+      ],
+      "verification_steps": [
+        "Le stepper reflète l'étape courante",
+        "Cliquer sur étape précédente y retourne"
+      ],
+      "dependencies": ["F006"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F015",
+      "category": "core",
+      "priority": "P1",
+      "agents": [
+        { "type": "fullstack-developer", "model": "sonnet", "role": "Reprise de session avec pré-remplissage" }
+      ],
+      "description": "Si le représentant revient sur son lien, il reprend à la dernière étape non complétée avec données pré-remplies.",
+      "acceptance_criteria": [
+        "Détection dernière étape complétée via données DB",
+        "Redirection automatique vers prochaine étape non complétée",
+        "Données déjà saisies pré-remplies"
+      ],
+      "verification_steps": [
+        "Compléter étapes 1-2, fermer, rouvrir → redirigé étape 3",
+        "Données des étapes 1-2 toujours en DB"
+      ],
+      "dependencies": ["F006", "F007"],
+      "estimated_complexity": "M",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    },
+    {
+      "id": "F016",
+      "category": "ui",
+      "priority": "P1",
+      "agents": [
+        { "type": "frontend-developer", "model": "sonnet", "role": "Messages d'erreur et de succès en français" }
+      ],
+      "description": "Messages d'erreur et de succès clairs pour toutes les interactions.",
+      "acceptance_criteria": [
+        "Messages d'erreur sous les champs invalides",
+        "Toast/alert de succès après chaque étape",
+        "Messages en français, clairs et non techniques"
+      ],
+      "verification_steps": [
+        "Formulaire invalide affiche erreurs sous les champs",
+        "Soumission réussie affiche message de confirmation"
+      ],
+      "dependencies": ["F007", "F008"],
+      "estimated_complexity": "S",
+      "passes": false,
+      "implemented_at": null,
+      "test_file": null,
+      "test_count": 0,
+      "tested_at": null
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "project": "Vero",
+  "version": "1.0.0",
+  "generated_at": "2026-04-01T20:30:00Z",
+  "total_features": 20,
+  "completed_features": 0,
+  "team_size": 5,
+  "features": [
+    { "id": "F001", "priority": "P0", "phase": 1, "passes": false, "dependencies": [], "estimated_complexity": "M" },
+    { "id": "F002", "priority": "P0", "phase": 1, "passes": false, "dependencies": ["F001"], "estimated_complexity": "M" },
+    { "id": "F003", "priority": "P0", "phase": 1, "passes": false, "dependencies": ["F002"], "estimated_complexity": "S" },
+    { "id": "F013", "priority": "P0", "phase": 1, "passes": false, "dependencies": ["F002"], "estimated_complexity": "L" },
+    { "id": "F004", "priority": "P0", "phase": 2, "passes": false, "dependencies": ["F001", "F002"], "estimated_complexity": "M" },
+    { "id": "F005", "priority": "P0", "phase": 2, "passes": false, "dependencies": ["F003", "F004"], "estimated_complexity": "S" },
+    { "id": "F006", "priority": "P0", "phase": 3, "passes": false, "dependencies": ["F003"], "estimated_complexity": "S" },
+    { "id": "F007", "priority": "P0", "phase": 3, "passes": false, "dependencies": ["F002", "F006"], "estimated_complexity": "L" },
+    { "id": "F008", "priority": "P0", "phase": 3, "passes": false, "dependencies": ["F006"], "estimated_complexity": "S" },
+    { "id": "F009", "priority": "P0", "phase": 3, "passes": false, "dependencies": ["F006"], "estimated_complexity": "M" },
+    { "id": "F010", "priority": "P0", "phase": 3, "passes": false, "dependencies": ["F006"], "estimated_complexity": "S" },
+    { "id": "F011", "priority": "P0", "phase": 3, "passes": false, "dependencies": ["F007", "F008", "F009", "F010"], "estimated_complexity": "M" },
+    { "id": "F012", "priority": "P0", "phase": 4, "passes": false, "dependencies": ["F004", "F011"], "estimated_complexity": "M" },
+    { "id": "F014", "priority": "P1", "phase": 3, "passes": false, "dependencies": ["F006"], "estimated_complexity": "S" },
+    { "id": "F015", "priority": "P1", "phase": 3, "passes": false, "dependencies": ["F006", "F007"], "estimated_complexity": "M" },
+    { "id": "F016", "priority": "P1", "phase": 3, "passes": false, "dependencies": ["F007", "F008"], "estimated_complexity": "S" },
+    { "id": "F017", "priority": "P1", "phase": 4, "passes": false, "dependencies": ["F004"], "estimated_complexity": "M" },
+    { "id": "F018", "priority": "P2", "phase": 4, "passes": false, "dependencies": ["F001"], "estimated_complexity": "S" },
+    { "id": "F019", "priority": "P2", "phase": 4, "passes": false, "dependencies": ["F012"], "estimated_complexity": "S" },
+    { "id": "F020", "priority": "P2", "phase": 4, "passes": false, "dependencies": ["F007"], "estimated_complexity": "M" }
+  ]
+}
